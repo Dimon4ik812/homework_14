@@ -39,3 +39,4 @@ emp_1 = Category("фрукты", "отечественные", ["яблоки", 
 emp_2 = Product("яблоки", "отечественные", 15.5, 55)
 emp_3 = Category.number_of_categories
 emp_4 = Category.number_of_unique_products
+
