@@ -6,20 +6,33 @@ class Category:
 
     name: str
     description: str
-    goods: list
+    __goods: list #приватный атрибуд
 
     # общее количество категорий и общее количество уникальных продуктов
     number_of_categories = 0
     number_of_unique_products = 0
 
-    def __init__(self, name, description, goods):
+    def __init__(self, name, description):
         """Метод для инициализации экземпляра класса, задаем значение атрибутам экземпляра"""
         self.name = name
         self.description = description
-        self.goods = goods
+        self.__goods = [] #Инициализируем список товаров
 
         Category.number_of_categories += 1
         Category.number_of_unique_products += 1
+
+    def add_product(self, product):
+        """метод для добавления товара в список товаров"""
+        self.__goods.append(product)
+
+
+    @property
+    def goods(self):
+        goods_info = ''
+        for product in self.__goods:
+            goods_info += f'{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n'
+        return goods_info
+
 
 
 class Product:
@@ -34,30 +47,93 @@ class Product:
         """Метод для инициализации экземпляра класса, задаем значение атрибутам экземпляра"""
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price #приватный атрибут
         self.quantity = quantity
 
 
-# emp_1 = Category("фрукты", "отечественные", ["яблоки", "слива", "груша"])
-emp_2 = Product("яблоки", "отечественные", 15.5, 55)
-# emp_3 = Category.number_of_categories
-# emp_4 = Category.number_of_unique_products
+    @classmethod
+    def create_product(cls, name, description, price, quantity):
+        """Класс-метод для создания товара и возращения объекта"""
+        return cls(name, description, price, quantity)
 
-file_path = "../data/products.json"
-result = open_read_json(file_path)
-categories = []
-for category_data in result:
-    products = []
-    for product_data in category_data["products"]:
-        product = Product(
-            name=product_data["name"],
-            description=product_data["description"],
-            price=product_data["price"],
-            quantity=product_data["quantity"],
-        )
-        products.append(product)
-    category = Category(name=category_data["name"], description=category_data["description"], goods=products)
-    categories.append(category)
+    @classmethod
+    def create_product1(cls, name, description, price, quantity, products_list):
+        for existing_product in products_list:
+            if existing_product.name == name:
+                if existing_product.price < price:
+                    existing_product.price = price
+                existing_product.quantity += quantity
+                return None
+        new_product = cls(name, description, price, quantity)
+        products_list.append(new_product)
+        return new_product
 
-print(Category.number_of_categories)
-print(Category.number_of_unique_products)
+    @property
+    def price(self):
+        """Геттер для цена"""
+        return self.__price
+
+    @price.setter
+    def price(self, new_price):
+        """Сеттер для цена"""
+        if new_price <= 0:
+            print('ценна введена корректно')
+        elif new_price < self.__price:
+            confirmation = input("Вы уверены, что хотите понизить цену? (y/n): ")
+            if confirmation.lower() == "y":
+                self.__price = new_price
+                print("Цена успешно понижена")
+            else:
+                print("Действие отменено")
+        else:
+            self.__price = new_price
+
+
+
+
+#Создание объекта класса Category и добавление товаров:
+
+category = Category("Фрукты", "Отечественные")
+product1 = Product.create_product("Яблоки", "Отечественные", 15.5, 55)
+category.add_product(product1)
+category = Category("Электроника", "Техника для дома")
+product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
+product3 = Product.create_product("Смартфон", "Android", 30000, 5)
+category.add_product(product2)
+category.add_product(product3)
+
+#Вывод списка товаров категории:
+print(category.goods)
+
+#Изменение цены товара:
+product1.price = 45000
+
+#Попытка изменения цены на некорректное значение:
+product2.price = -1000
+
+#Подтверждение понижения цены товара:
+product3.price = 25000
+
+#Отмена понижения цены товара:
+product3.price = 35000
+
+
+
+# file_path = "../data/products.json"
+# result = open_read_json(file_path)
+# categories = []
+# for category_data in result:
+#     products = []
+#     for product_data in category_data["products"]:
+#         product = Product(
+#             name=product_data["name"],
+#             description=product_data["description"],
+#             price=product_data["price"],
+#             quantity=product_data["quantity"],
+#         )
+#         products.append(product)
+#     category = Category(name=category_data["name"], description=category_data["description"], goods=products)
+#     categories.append(category)
+#
+# print(Category.number_of_categories)
+# print(Category.number_of_unique_products)
