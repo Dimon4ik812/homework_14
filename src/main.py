@@ -70,8 +70,8 @@ class Product:
     @price.setter
     def price(self, new_price):
         """Сеттер для цена"""
-        if new_price >= 0:
-            print("ценна введена корректно")
+        if new_price <= 0:
+            print("ценна введена некорректно")
         elif new_price < self.__price:
             confirmation = input("Вы уверены, что хотите понизить цену? (y/n): ")
             if confirmation.lower() == "y":
