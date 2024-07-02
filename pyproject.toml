@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "homework-14"
+name = "homework-new"
 version = "0.1.0"
 description = ""
 authors = ["Дмитрий <kriukov@pos-credit.ru>"]
@@ -32,4 +32,3 @@ line_length = 119
 
 [tool.mypy]
 disallow_untyped_defs = true
-
