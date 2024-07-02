@@ -1,36 +1,39 @@
-import unittest
-
-import pytest
+from unittest import mock
 
 from src.main import Category, Product
 
-
-@pytest.fixture
-def category_fruits():
-    return Category("фрукты", "отечественные", ["яблоки", "слива", "груша"])
-
-
-@pytest.fixture
-def product_apple():
-    return Product("яблоки", "отечественные", 15.5, 55)
+def test_add_product():
+    category = Category("Фрукты", "Отечественные")
+    product = Product.create_product("Яблоки", "Отечественные", 15.5, 55)
+    category.add_product(product)
+    assert category.goods == ["Яблоки, 15.5 руб. Остаток: 55 шт.\n"]
 
 
-def test_category(category_fruits):
-    assert category_fruits.name == "фрукты"
-    assert category_fruits.description == "отечественные"
-    assert category_fruits.goods == ["яблоки", "слива", "груша"]
+def test_change_price():
+    product = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
+    assert product.price == 50000
+    product.price = 45000
+    assert product.price == 45000
 
 
-def test_product(product_apple):
-    assert product_apple.name == "яблоки"
-    assert product_apple.description == "отечественные"
-    assert product_apple.price == 15.5
-    assert product_apple.quantity == 55
+def test_negative_price():
+    product = Product.create_product("Смартфон", "Android", 30000, 5)
+    assert product.price == 30000
+    product.price = -1000
+    assert product.price == 30000
 
 
-class TestCategory(unittest.TestCase):
+def test_confirm_price_change():
+    product = Product.create_product("Смартфон", "Android", 30000, 5)
+    assert product.price == 30000
+    with mock.patch("builtins.input", return_value="y"):
+        product.price = 25000
+    assert product.price == 25000
 
-    def test_number_of_categories(self):
-        initial_count = Category.number_of_categories
-        category = Category("овощи", "отечественные", ["морковь", "картофель", "лук"])
-        self.assertEqual(Category.number_of_categories, initial_count + 1)
+
+def test_cancel_price_change():
+    product = Product.create_product("Смартфон", "Android", 30000, 5)
+    assert product.price == 30000
+    with mock.patch("builtins.input", return_value="n"):
+        product.price = 25000
+    assert product.price == 30000
