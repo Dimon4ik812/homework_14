@@ -18,16 +18,24 @@ class Category:
         Category.number_of_categories += 1
         Category.number_of_unique_products += 1
 
+
     def add_product(self, product):
         """метод для добавления товара в список товаров"""
         self.__goods.append(product)
 
+
     @property
     def goods(self):
-        goods_info = []
-        for product in self.__goods:
-            goods_info.append(f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n")
-        return goods_info
+        return '\n'.join(str(product) for product in self.__goods)
+
+
+    def __len__(self):
+        return len(self.__goods)
+
+    def __str__(self):
+        return f'{self.name}, количество продуктов: {len(self)} шт.'
+
+
 
 
 class Product:
@@ -83,28 +91,48 @@ class Product:
             self.__price = new_price
 
 
+    def __str__(self):
+        return f'{self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)'
+
+
+
+
+    def __add__(self, other):
+        result = self.__price * self.quantity + other.__price * other.quantity
+        return result
+
+
+
 # Создание объекта класса Category и добавление товаров:
 
-category = Category("Фрукты", "Отечественные")
+category_1 = Category("Фрукты", "Отечественные")
 product1 = Product.create_product("Яблоки", "Отечественные", 15.5, 55)
-category.add_product(product1)
-category = Category("Электроника", "Техника для дома")
+category_1.add_product(product1)
+
+category_2 = Category("Электроника", "Техника для дома")
 product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
 product3 = Product.create_product("Смартфон", "Android", 30000, 5)
-category.add_product(product2)
-category.add_product(product3)
-
+category_2.add_product(product2)
+category_2.add_product(product3)
 # Вывод списка товаров категории:
-print(category.goods)
+print(category_1.goods)
+print(category_2.goods)
 
+# вывод количества остатка на складе
+print(category_2)
+print(category_1)
+
+result = (product3 + product1)
+print(result)
 # Изменение цены товара:
-product1.price = 45000
+# product1.price = 45000
+#
+# # Попытка изменения цены на некорректное значение:
+# product2.price = -1000
+#
+# # Подтверждение понижения цены товара:
+# product3.price = 25000
+#
+# # Отмена понижения цены товара:
+# product3.price = 35000
 
-# Попытка изменения цены на некорректное значение:
-product2.price = -1000
-
-# Подтверждение понижения цены товара:
-product3.price = 25000
-
-# Отмена понижения цены товара:
-product3.price = 35000
