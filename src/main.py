@@ -18,24 +18,19 @@ class Category:
         Category.number_of_categories += 1
         Category.number_of_unique_products += 1
 
-
     def add_product(self, product):
         """метод для добавления товара в список товаров"""
         self.__goods.append(product)
 
-
     @property
     def goods(self):
-        return '\n'.join(str(product) for product in self.__goods)
-
+        return "\n".join(str(product) for product in self.__goods)
 
     def __len__(self):
-        return len(self.__goods)
+        return sum(product.quantity for product in self.__goods)
 
     def __str__(self):
-        return f'{self.name}, количество продуктов: {len(self)} шт.'
-
-
+        return f"{self.name}, количество продуктов: {len(self)} шт."
 
 
 class Product:
@@ -90,17 +85,12 @@ class Product:
         else:
             self.__price = new_price
 
-
     def __str__(self):
-        return f'{self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)'
-
-
-
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
 
     def __add__(self, other):
         result = self.__price * self.quantity + other.__price * other.quantity
         return result
-
 
 
 # Создание объекта класса Category и добавление товаров:
@@ -114,6 +104,7 @@ product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10
 product3 = Product.create_product("Смартфон", "Android", 30000, 5)
 category_2.add_product(product2)
 category_2.add_product(product3)
+
 # Вывод списка товаров категории:
 print(category_1.goods)
 print(category_2.goods)
@@ -122,17 +113,18 @@ print(category_2.goods)
 print(category_2)
 print(category_1)
 
-result = (product3 + product1)
-print(result)
 # Изменение цены товара:
-# product1.price = 45000
-#
-# # Попытка изменения цены на некорректное значение:
-# product2.price = -1000
-#
-# # Подтверждение понижения цены товара:
-# product3.price = 25000
-#
-# # Отмена понижения цены товара:
-# product3.price = 35000
+product1.price = 45000
 
+# Попытка изменения цены на некорректное значение:
+product2.price = -1000
+
+# Подтверждение понижения цены товара:
+product3.price = 25000
+
+# Отмена понижения цены товара:
+product3.price = 35000
+
+# вывод общего остатка
+total_price = product3 + product2
+print(f"Общая сумма остатка {total_price}")
