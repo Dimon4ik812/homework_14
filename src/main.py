@@ -20,7 +20,10 @@ class Category:
 
     def add_product(self, product):
         """метод для добавления товара в список товаров"""
-        self.__goods.append(product)
+        if isinstance(product, Product) and issubclass(type(product), Product):
+            self.__goods.append(product)
+        else:
+            raise TypeError("Добавлять можно только товары или их подклассы")
 
     @property
     def goods(self):
@@ -47,6 +50,9 @@ class Product:
         self.description = description
         self.__price = price  # приватный атрибут
         self.quantity = quantity
+
+    # def get_name(self):
+    #     return self.name
 
     @classmethod
     def create_product(cls, name, description, price, quantity):
@@ -89,8 +95,37 @@ class Product:
         return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
 
     def __add__(self, other):
-        result = self.__price * self.quantity + other.__price * other.quantity
-        return result
+        if isinstance(self, type(other)):
+            result = self.__price * self.quantity + other.__price * other.quantity
+            return result
+        else:
+            raise TypeError("Можно складывать только товары одного класса")
+
+
+class Smartphone(Product):
+    performance: float
+    model: str
+    memory: int
+    color: str
+
+    def __init__(self, name, description, price, quantity, performance, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.performance = performance
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    manufacturer_country: str
+    germination_period: int
+    color: str
+
+    def __init__(self, name, description, price, quantity, manufacturer_country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.manufacturer_country = manufacturer_country
+        self.germination_period = germination_period
+        self.color = color
 
 
 # Создание объекта класса Category и добавление товаров:
@@ -101,17 +136,27 @@ category_1.add_product(product1)
 
 category_2 = Category("Электроника", "Техника для дома")
 product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
-product3 = Product.create_product("Смартфон", "Android", 30000, 5)
+product3 = Product.create_product("Samsung", "Android", 30000, 5)
 category_2.add_product(product2)
 category_2.add_product(product3)
-
-# Вывод списка товаров категории:
+smartphone = Smartphone("iPhone 13", " Apple", 79999, 10, 3.2, "iPhone 13", 128, "Черный")
+category_2.add_product(smartphone)
+category_3 = Category("Газонная трава", "Товары для сада")
+lawn_grass = LawnGrass("Газонная трава", "Высококачественная газонная трава", 500, 20, "Россия", 14, "Зеленый")
+category_3.add_product(lawn_grass)
+# Вывод списка товаров категории фрукты:
 print(category_1.goods)
+print("############разделение##############")
+# Вывод списка товаров категории электроника
 print(category_2.goods)
+# Вывод списка товаров категории товары для сада
+print("############разделение##############")
+print(category_3.goods)
 
 # вывод количества остатка на складе
 print(category_2)
 print(category_1)
+print(category_3)
 
 # Изменение цены товара:
 product1.price = 45000

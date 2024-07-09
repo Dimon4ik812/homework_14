@@ -1,6 +1,8 @@
 import unittest
 from unittest import mock
 
+import pytest
+
 from src.main import Category, Product
 
 
@@ -52,3 +54,16 @@ class TestProduct(unittest.TestCase):
 
         # Вызываем метод __add__ и проверяем, что результат совпадает с ожидаемым
         self.assertEqual(product1 + product2, expected_result)
+
+
+def test_add_product_valid():
+    category = Category("Электроника", "Техника для дома")
+    product = Product("Телевизор", "4K Smart TV", 50000, 10)
+    category.add_product(product)
+    assert len(category._Category__goods) == 1
+
+
+def test_add_product_invalid():
+    category = Category("Электроника", "Техника для дома")
+    with pytest.raises(TypeError):
+        category.add_product("Телевизор")
