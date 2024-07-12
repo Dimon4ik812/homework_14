@@ -1,3 +1,24 @@
+from abc import ABC, abstractmethod
+
+class BaseProduct(ABC):
+    @abstractmethod
+    def new_product(self, *args, **kwargs):
+        pass
+
+class CreationMixin:
+    """Миксин для вывода информации о создании объекта"""
+
+    def __init__(self, *args, **kwargs):
+        print(repr(self))
+
+    def __repr__(self):
+        attrs = ', '.join([f"{attr}={getattr(self, attr)}" for attr in self.__dict__])
+        return f"{self.__class__.__name__}({attrs})"
+    # def __repr__(self):
+    #     class_name = self.__class__.__name__
+    #     attributes = ', '.join(f'{key}={value}' for key, value in self.__dict__.items())
+    #     return f"{class_name}({attributes})"
+
 class Category:
     """класс для категорий"""
 
@@ -20,7 +41,7 @@ class Category:
 
     def add_product(self, product):
         """метод для добавления товара в список товаров"""
-        if isinstance(product, Product) and issubclass(type(product), Product):
+        if isinstance(product, BaseProduct):
             self.__goods.append(product)
         else:
             raise TypeError("Добавлять можно только товары или их подклассы")
@@ -36,7 +57,7 @@ class Category:
         return f"{self.name}, количество продуктов: {len(self)} шт."
 
 
-class Product:
+class Product(BaseProduct, CreationMixin):
     """класс для продуктов"""
 
     name: str
@@ -44,15 +65,13 @@ class Product:
     price: float
     quantity: int
 
-    def __init__(self, name, description, price, quantity):
+    def __init__(self, name, description, price, quantity, *args, **kwargs):
         """Метод для инициализации экземпляра класса, задаем значение атрибутам экземпляра"""
+        super().__init__(*args, **kwargs)
         self.name = name
         self.description = description
         self.__price = price  # приватный атрибут
         self.quantity = quantity
-
-    # def get_name(self):
-    #     return self.name
 
     @classmethod
     def create_product(cls, name, description, price, quantity):
@@ -101,8 +120,10 @@ class Product:
         else:
             raise TypeError("Можно складывать только товары одного класса")
 
+    def new_product(self, *args, **kwargs):
+        pass
 
-class Smartphone(Product):
+class Smartphone(Product, CreationMixin):
     performance: float
     model: str
     memory: int
@@ -115,8 +136,10 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
+    def new_product(self, *args, **kwargs):
+        pass
 
-class LawnGrass(Product):
+class LawnGrass(Product, CreationMixin):
     manufacturer_country: str
     germination_period: int
     color: str
@@ -127,6 +150,8 @@ class LawnGrass(Product):
         self.germination_period = germination_period
         self.color = color
 
+    def new_product(self, *args, **kwargs):
+        pass
 
 # Создание объекта класса Category и добавление товаров:
 
@@ -144,13 +169,14 @@ category_2.add_product(smartphone)
 category_3 = Category("Газонная трава", "Товары для сада")
 lawn_grass = LawnGrass("Газонная трава", "Высококачественная газонная трава", 500, 20, "Россия", 14, "Зеленый")
 category_3.add_product(lawn_grass)
+
 # Вывод списка товаров категории фрукты:
 print(category_1.goods)
 print("############разделение##############")
 # Вывод списка товаров категории электроника
 print(category_2.goods)
-# Вывод списка товаров категории товары для сада
 print("############разделение##############")
+# Вывод списка товаров категории товары для сада
 print(category_3.goods)
 
 # вывод количества остатка на складе
@@ -172,4 +198,3 @@ product3.price = 35000
 
 # вывод общего остатка
 total_price = product3 + product2
-print(f"Общая сумма остатка {total_price}")
