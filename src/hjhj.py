@@ -13,13 +13,8 @@ class CreationMixin:
         print(repr(self))
 
     def __repr__(self):
-        list_p = [f'{key}: {value}' for key, value in self.__dict__.items()]
-        return f'Создан объект класса {self.__class__.__name__}: {', '.join(list_p)}'
-        # attrs = ', '.join([f"{attr}={getattr(self, attr)}" for attr in self.__dict__])
-        # print(attrs)
-        # return f"{self.__class__.__name__}({attrs})"
-
-
+        attrs = ', '.join([f"{attr}={getattr(self.price)}" for attr in self.__dict__ if not attr.startswith('__')])
+        return f"{self.__class__.__name__}({attrs})"
 
 class Category:
     """класс для категорий"""
@@ -64,7 +59,7 @@ class Product(BaseProduct, CreationMixin):
 
     name: str
     description: str
-    price: float
+    __price: float
     quantity: int
 
     def __init__(self, name, description, price, quantity, *args, **kwargs):
@@ -113,18 +108,17 @@ class Product(BaseProduct, CreationMixin):
             self.__price = new_price
 
     def __str__(self):
-        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт.)"
 
     def __add__(self, other):
         if isinstance(self, type(other)):
-            result = self.__price * self.quantity + other.__price * other.quantity
+            result = self.price * self.quantity + other.price * other.quantity
             return result
         else:
             raise TypeError("Можно складывать только товары одного класса")
 
     def new_product(self, *args, **kwargs):
         pass
-
 
 class Smartphone(Product, CreationMixin):
     performance: float
@@ -141,7 +135,6 @@ class Smartphone(Product, CreationMixin):
 
     def new_product(self, *args, **kwargs):
         pass
-
 
 class LawnGrass(Product, CreationMixin):
     manufacturer_country: str
@@ -202,6 +195,3 @@ product3.price = 35000
 
 # вывод общего остатка
 total_price = product3 + product2
-
-result = CreationMixin(product1)
-print(result)
