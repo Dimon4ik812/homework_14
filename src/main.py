@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+
 class BaseProduct(ABC):
     @abstractmethod
     def new_product(self, *args, **kwargs):
         pass
+
 
 class CreationMixin:
     """Миксин для вывода информации о создании объекта"""
@@ -13,12 +15,7 @@ class CreationMixin:
         print(repr(self))
 
     def __repr__(self):
-        list_p = [f'{key}: {value}' for key, value in self.__dict__.items()]
-        return f'Создан объект класса {self.__class__.__name__}: {', '.join(list_p)}'
-        # attrs = ', '.join([f"{attr}={getattr(self, attr)}" for attr in self.__dict__])
-        # print(attrs)
-        # return f"{self.__class__.__name__}({attrs})"
-
+        return f"Создан объект класса {self.__class__.__name__}: {self}"
 
 
 class Category:
@@ -69,11 +66,11 @@ class Product(BaseProduct, CreationMixin):
 
     def __init__(self, name, description, price, quantity, *args, **kwargs):
         """Метод для инициализации экземпляра класса, задаем значение атрибутам экземпляра"""
-        super().__init__(*args, **kwargs)
         self.name = name
         self.description = description
         self.__price = price  # приватный атрибут
         self.quantity = quantity
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def create_product(cls, name, description, price, quantity):
@@ -133,11 +130,11 @@ class Smartphone(Product, CreationMixin):
     color: str
 
     def __init__(self, name, description, price, quantity, performance, model, memory, color):
-        super().__init__(name, description, price, quantity)
         self.performance = performance
         self.model = model
         self.memory = memory
         self.color = color
+        super().__init__(name, description, price, quantity)
 
     def new_product(self, *args, **kwargs):
         pass
@@ -149,13 +146,14 @@ class LawnGrass(Product, CreationMixin):
     color: str
 
     def __init__(self, name, description, price, quantity, manufacturer_country, germination_period, color):
-        super().__init__(name, description, price, quantity)
         self.manufacturer_country = manufacturer_country
         self.germination_period = germination_period
         self.color = color
+        super().__init__(name, description, price, quantity)
 
     def new_product(self, *args, **kwargs):
         pass
+
 
 # Создание объекта класса Category и добавление товаров:
 
@@ -202,6 +200,3 @@ product3.price = 35000
 
 # вывод общего остатка
 total_price = product3 + product2
-
-result = CreationMixin(product1)
-print(result)
