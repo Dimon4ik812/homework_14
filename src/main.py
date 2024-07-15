@@ -44,6 +44,8 @@ class Category:
             self.__goods.append(product)
         else:
             raise TypeError("Добавлять можно только товары или их подклассы")
+        if product.quantity <= 0:
+            raise ValueError('Количество должно быть больше нуля')
 
     @property
     def goods(self):
@@ -160,6 +162,7 @@ class LawnGrass(Product, CreationMixin):
 category_1 = Category("Фрукты", "Отечественные")
 product1 = Product.create_product("Яблоки", "Отечественные", 15.5, 55)
 category_1.add_product(product1)
+
 
 category_2 = Category("Электроника", "Техника для дома")
 product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)

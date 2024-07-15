@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from src.main import Category, Product
+from src.main import Category, Product, category_1
 
 
 def test_add_product():
@@ -67,3 +67,12 @@ def test_add_product_invalid():
     category = Category("Электроника", "Техника для дома")
     with pytest.raises(TypeError):
         category.add_product("Телевизор")
+
+
+def test_add_product_quantity_zero():
+    product1 = Product.create_product("Яблоки", "Отечественные", 15.5, 0)
+    with pytest.raises(ValueError) as e_info:
+        category_1.add_product(product1)
+
+
+
