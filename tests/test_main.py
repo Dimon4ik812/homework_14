@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-
+from unittest.mock import patch
 import pytest
 
 from src.main import Category, Product, category_1
@@ -74,5 +74,21 @@ def test_add_product_quantity_zero():
     with pytest.raises(ValueError) as e_info:
         category_1.add_product(product1)
 
+    def setUp(self):
+        self.category = Category("Электроника", "Техника для дома")
 
+    def test_average_price_tag_with_products(self):
+        product1 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
+        product2 = Product.create_product("Samsung", "Android", 30000, 5)
+        self.category.add_product(product1)
+        self.category.add_product(product2)
+        self.assertAlmostEqual(self.category.average_price_tag(), 40000, delta=0.01)
 
+    def test_average_price_tag_with_no_products(self):
+        self.assertEqual(self.category.average_price_tag(), 0)
+
+    @patch("builtins.input", return_value="y")
+    def test_average_price_tag_with_zero_division(self, mock_input):
+        product = Product.create_product("Телевизор", "4K Smart TV", 50000, 0)
+        self.category.add_product(product)
+        self.assertEqual(self.category.average_price_tag(), 0)
