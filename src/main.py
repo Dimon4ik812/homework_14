@@ -44,6 +44,8 @@ class Category:
             self.__goods.append(product)
         else:
             raise TypeError("Добавлять можно только товары или их подклассы")
+        if product.quantity <= 0:
+            raise ValueError("Количество должно быть больше нуля")
 
     @property
     def goods(self):
@@ -54,6 +56,15 @@ class Category:
 
     def __str__(self):
         return f"{self.name}, количество продуктов: {len(self)} шт."
+
+    def average_price_tag(self):
+        """Метод подсчитывает средний ценник товаров"""
+        if not self.__goods:
+            return 0
+        try:
+            return sum(product.price for product in self.__goods) / len(self.__goods)
+        except ZeroDivisionError:
+            return 0
 
 
 class Product(BaseProduct, CreationMixin):
@@ -114,8 +125,7 @@ class Product(BaseProduct, CreationMixin):
 
     def __add__(self, other):
         if isinstance(self, type(other)):
-            result = self.__price * self.quantity + other.__price * other.quantity
-            return result
+            return self.__price * self.quantity + other.__price * other.quantity
         else:
             raise TypeError("Можно складывать только товары одного класса")
 
@@ -160,6 +170,7 @@ class LawnGrass(Product, CreationMixin):
 category_1 = Category("Фрукты", "Отечественные")
 product1 = Product.create_product("Яблоки", "Отечественные", 15.5, 55)
 category_1.add_product(product1)
+
 
 category_2 = Category("Электроника", "Техника для дома")
 product2 = Product.create_product("Телевизор", "4K Smart TV", 50000, 10)
